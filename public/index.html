@@ -1,1 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Thanh toán</title>
+<style>
+  :root {
+    --bg: #eef3fb;
+    --card: #ffffff;
+    --accent: #2f6fed;
+    --text: #1c2333;
+    --muted: #6b7280;
+    --success: #16a34a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, #dfe9fb, #f5f8fd);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    padding: 24px;
+  }
+  .card {
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(30, 60, 120, 0.12);
+    width: 100%;
+    max-width: 380px;
+    padding: 28px 24px 32px;
+    text-align: center;
+  }
+  h1 {
+    font-size: 18px;
+    margin: 0 0 4px;
+  }
+  .amount {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 6px 0 18px;
+  }
+  .qr-wrap {
+    background: #fff;
+    border: 1px solid #eef1f6;
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+  .qr-wrap img {
+    width: 100%;
+    max-width: 300px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 10px;
+  }
+  .info {
+    text-align: left;
+    background: #f7f9fc;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .info div { margin: 4px 0; }
+  .info b { color: var(--text); }
+  .status {
+    font-size: 14px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1.2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+  .paid { color: var(--success); font-weight: 600; }
+  .paid .dot { background: var(--success); animation: none; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Quét mã để thanh toán</h1>
+    <div class="amount" id="amountText">...</div>
 
+    <div class="qr-wrap">
+      <img id="qrImage" src="" alt="Mã QR thanh toán" />
+    </div>
+
+    <div class="info">
+      <div><b>Ngân hàng:</b> <span id="bankText">MB Bank</span></div>
+      <div><b>Số tài khoản:</b> <span id="accText">...</span></div>
+      <div><b>Chủ tài khoản:</b> <span id="nameText">...</span></div>
+      <div><b>Nội dung CK:</b> <span id="orderText">...</span></div>
+    </div>
+
+    <div class="status" id="statusBox">
+      <span class="dot"></span>
+      <span id="statusText">Đang chờ thanh toán...</span>
+    </div>
+  </div>
+
+<script>
+  let orderCode = null;
+  let pollTimer = null;
+
+  async function createOrder() {
+    // Cho phép chỉ định link chuyển hướng qua query string: ?redirect=https://...
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get('redirect') || undefined;
+
+    const res = await fetch('/api/create-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(redirect ? { redirect } : {}),
+    });
+    const data = await res.json();
+
+    orderCode = data.orderCode;
+    document.getElementById('qrImage').src = data.qrUrl;
+    document.getElementById('amountText').textContent =
+      data.amount.toLocaleString('vi-VN') + ' đ';
+    document.getElementById('accText').textContent = data.accountNo;
+    document.getElementById('nameText').textContent = data.accountName;
+    document.getElementById('orderText').textContent = data.orderCode;
+
+    startPolling();
+  }
+
+  function startPolling() {
+    pollTimer = setInterval(checkStatus, 3000);
+  }
+
+  async function checkStatus() {
+    if (!orderCode) return;
+    try {
+      const res = await fetch('/api/order-status/' + orderCode);
+      const data = await res.json();
+      if (data.paid) {
+        clearInterval(pollTimer);
+        const box = document.getElementById('statusBox');
+        box.classList.add('paid');
+        document.getElementById('statusText').textContent = 'Thanh toán thành công! Đang chuyển hướng...';
+        setTimeout(() => {
+          window.location.href = data.redirect;
+        }, 1200);
+      }
+    } catch (e) {
+      console.error('Lỗi kiểm tra trạng thái:', e);
+    }
+  }
+
+  createOrder();
+</script>
+</body>
+</html>
