@@ -1,0 +1,13 @@
+{
+  "name": "sepay-vietqr-redirect",
+  "version": "1.0.0",
+  "description": "Trang thanh toan VietQR, tu dong chuyen huong khi SePay bao nhan duoc tien",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "dotenv": "^16.4.5"
+  }
+}
