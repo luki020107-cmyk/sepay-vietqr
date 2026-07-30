@@ -119,14 +119,15 @@
   let pollTimer = null;
 
   async function createOrder() {
-    // Cho phép chỉ định link chuyển hướng qua query string: ?redirect=https://...
+    // Chọn sản phẩm/gói qua query string: ?product=ao1
+    // Server sẽ tự tra amount + redirect tương ứng trong products.json (client không thể tự ý đổi giá)
     const params = new URLSearchParams(window.location.search);
-    const redirect = params.get('redirect') || undefined;
+    const product = params.get('product') || 'default';
 
     const res = await fetch('/api/create-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(redirect ? { redirect } : {}),
+      body: JSON.stringify({ product }),
     });
     const data = await res.json();
 
@@ -134,6 +135,9 @@
     document.getElementById('qrImage').src = data.qrUrl;
     document.getElementById('amountText').textContent =
       data.amount.toLocaleString('vi-VN') + ' đ';
+    if (data.label) {
+      document.querySelector('h1').textContent = data.label;
+    }
     document.getElementById('accText').textContent = data.accountNo;
     document.getElementById('nameText').textContent = data.accountName;
     document.getElementById('orderText').textContent = data.orderCode;
