@@ -1,17 +1,48 @@
 {
-  "default": {
+  "link1": {
     "amount": 20000,
     "redirect": "https://note2s.vip/notes/edit/XJMVYQ",
+    "label": "Thanh toán "
+  },
+  "link2": {
+    "amount": 20000,
+    "redirect": "https://note2s.vip/notes/edit/YKN10X",
+    "label": "Thanh toán"
+  },
+  "link3": {
+    "amount": 20000,
+    "redirect": "https://note2s.vip/notes/edit/YKN1OZ",
+    "label": "Thanh toán"
+  },
+  "link4": {
+    "amount": 10000,
+    "redirect": "https://zalo.me/tenban",
     "label": "Thanh toán mặc định"
   },
-  "ao1": {
-    "amount": 15000,
-    "redirect": "https://note2s.vip/notes/edit/YKN10X",
-    "label": "Áo thun mẫu 1"
+  "link5": {
+    "amount": 50000,
+    "redirect": "https://link-sp1.com",
+    "label": "Sản phẩm 1"
   },
-  "khoahoc": {
-    "amount": 299000,
-    "redirect": "https://example.com/link-khoahoc",
-    "label": "Khóa học online"
+  "link6": {
+    "amount": 80000,
+    "redirect": "https://link-sp2.com",
+    "label": "Sản phẩm 2"
+  },
+  "link7": {
+    "amount": 120000,
+    "redirect": "https://link-sp3.com",
+    "label": "Sản phẩm 3"
+  },
+  "link8": {
+    "amount": 200000,
+    "redirect": "https://link-sp4.com",
+    "label": "Sản phẩm 4"
+  },
+  "link9": {
+    "amount": 350000,
+    "redirect": "https://link-sp5.com",
+    "label": "Sản phẩm 5"
   }
 }
+
