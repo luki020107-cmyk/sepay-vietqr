@@ -1,23 +1,41 @@
 require('dotenv').config();
 const express = require('express');
 const crypto = require('crypto');
+const fs = require('fs');
 const path = require('path');
 
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ====== CẤU HÌNH (đọc từ file .env) ======
-const BANK_ID = process.env.BANK_ID || 'MB';                 // Mã ngân hàng VietQR (MB = MB Bank)
-const ACCOUNT_NO = process.env.ACCOUNT_NO || '0349882514';   // Số tài khoản của bạn
+// ====== CẤU HÌNH NGÂN HÀNG (đọc từ .env) ======
+const BANK_ID = process.env.BANK_ID || 'MB';
+const ACCOUNT_NO = process.env.ACCOUNT_NO || '0349882514';
 const ACCOUNT_NAME = process.env.ACCOUNT_NAME || 'DUONG NGUYEN GIA BAO';
-const AMOUNT = parseInt(process.env.AMOUNT || '15000', 10);  // Số tiền cố định
-const DEFAULT_REDIRECT = process.env.DEFAULT_REDIRECT || 'https://example.com/thank-you';
-const SEPAY_API_KEY = process.env.SEPAY_API_KEY || '';       // API Key bạn đặt trong SePay -> để xác thực webhook
 const ORDER_TTL_MS = 30 * 60 * 1000; // đơn hết hạn sau 30 phút
 
-// Lưu đơn hàng trong bộ nhớ (đơn giản, phù hợp cho lưu lượng nhỏ/vừa).
-// Nếu cần bền vững hơn (restart server không mất dữ liệu), thay bằng SQLite/Redis.
+// ====== ĐỌC DANH SÁCH SẢN PHẨM TỪ products.json ======
+// Mỗi sản phẩm có: amount (số tiền), redirect (link chuyển hướng sau khi trả tiền), label (tên hiển thị)
+// Muốn thêm/sửa sản phẩm: sửa file products.json, commit, push lên GitHub -> Render tự deploy lại.
+const PRODUCTS_FILE = path.join(__dirname, 'products.json');
+
+function loadProducts() {
+  try {
+    const raw = fs.readFileSync(PRODUCTS_FILE, 'utf-8');
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error('Không đọc được products.json, dùng cấu hình mặc định:', e.message);
+    return {
+      default: {
+        amount: 15000,
+        redirect: process.env.DEFAULT_REDIRECT || 'https://example.com/thank-you',
+        label: 'Thanh toán mặc định',
+      },
+    };
+  }
+}
+
+// Lưu đơn hàng trong bộ nhớ
 const orders = new Map();
 
 function cleanupOldOrders() {
@@ -28,14 +46,28 @@ function cleanupOldOrders() {
 }
 setInterval(cleanupOldOrders, 5 * 60 * 1000);
 
-// Sinh mã đơn hàng ngắn, duy nhất, chỉ gồm chữ+số (để nằm gọn trong nội dung chuyển khoản)
 function generateOrderCode() {
   return 'DH' + crypto.randomBytes(4).toString('hex').toUpperCase();
 }
 
+// ====== API: Lấy thông tin 1 sản phẩm (để hiển thị tên/giá trước khi tạo đơn) ======
+app.get('/api/product/:code', (req, res) => {
+  const products = loadProducts();
+  const product = products[req.params.code] || products['default'];
+  if (!product) return res.status(404).json({ error: 'Không tìm thấy sản phẩm' });
+  res.json({ amount: product.amount, label: product.label || req.params.code });
+});
+
 // ====== API: Tạo đơn hàng mới + link QR ======
+// Server tự lấy amount/redirect từ products.json theo "product code" -> KHÔNG tin dữ liệu amount/redirect do client tự gửi lên (bảo mật)
 app.post('/api/create-order', (req, res) => {
-  const redirect = (req.body && req.body.redirect) || DEFAULT_REDIRECT;
+  const products = loadProducts();
+  const productCode = (req.body && req.body.product) || 'default';
+  const product = products[productCode] || products['default'];
+
+  if (!product) {
+    return res.status(400).json({ error: 'Cấu hình sản phẩm không hợp lệ' });
+  }
 
   let orderCode;
   do {
@@ -43,20 +75,21 @@ app.post('/api/create-order', (req, res) => {
   } while (orders.has(orderCode));
 
   orders.set(orderCode, {
-    amount: AMOUNT,
-    redirect,
+    amount: product.amount,
+    redirect: product.redirect,
     paid: false,
     createdAt: Date.now(),
   });
 
   const qrUrl =
     `https://img.vietqr.io/image/${encodeURIComponent(BANK_ID)}-${encodeURIComponent(ACCOUNT_NO)}-compact2.png` +
-    `?amount=${AMOUNT}&addInfo=${encodeURIComponent(orderCode)}&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
+    `?amount=${product.amount}&addInfo=${encodeURIComponent(orderCode)}&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
 
   res.json({
     orderCode,
     qrUrl,
-    amount: AMOUNT,
+    amount: product.amount,
+    label: product.label || productCode,
     accountNo: ACCOUNT_NO,
     accountName: ACCOUNT_NAME,
   });
@@ -70,10 +103,8 @@ app.get('/api/order-status/:orderCode', (req, res) => {
 });
 
 // ====== Webhook nhận từ SePay khi có giao dịch ======
-// Cấu hình trong SePay: URL = https://<domain-cua-ban>/api/sepay-webhook
-// Nhớ đặt "API Key" trong SePay giống với SEPAY_API_KEY trong .env để bảo mật webhook.
 app.post('/api/sepay-webhook', (req, res) => {
-  // Xác thực: SePay gửi header Authorization: Apikey <key>
+  const SEPAY_API_KEY = process.env.SEPAY_API_KEY || '';
   if (SEPAY_API_KEY) {
     const auth = req.headers['authorization'] || '';
     if (auth !== `Apikey ${SEPAY_API_KEY}`) {
@@ -82,16 +113,14 @@ app.post('/api/sepay-webhook', (req, res) => {
   }
 
   const body = req.body || {};
-  // Các field phổ biến SePay gửi: transferType, transferAmount, content, code, description
   const content = (body.content || body.description || '').toUpperCase();
   const transferAmount = Number(body.transferAmount || body.amount || 0);
-  const transferType = body.transferType || body.transfer_type; // "in" = tiền vào
+  const transferType = body.transferType || body.transfer_type;
 
   if (transferType && transferType !== 'in') {
     return res.json({ success: true, message: 'Bỏ qua giao dịch không phải tiền vào' });
   }
 
-  // Tìm đơn hàng chưa thanh toán có mã nằm trong nội dung chuyển khoản và đúng số tiền
   let matched = null;
   for (const [orderCode, order] of orders.entries()) {
     if (order.paid) continue;
@@ -108,7 +137,6 @@ app.post('/api/sepay-webhook', (req, res) => {
     console.log('⚠️  Giao dịch không khớp đơn hàng nào:', content, transferAmount);
   }
 
-  // Luôn trả 200 để SePay biết đã nhận thành công
   res.json({ success: true });
 });
 
