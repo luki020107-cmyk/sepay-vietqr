@@ -1,12 +1,12 @@
 {
   "default": {
-    "amount": 15000,
-    "redirect": "https://example.com/thank-you",
+    "amount": 20000,
+    "redirect": "https://note2s.vip/notes/edit/XJMVYQ",
     "label": "Thanh toán mặc định"
   },
   "ao1": {
-    "amount": 50000,
-    "redirect": "https://example.com/link-ao1",
+    "amount": 15000,
+    "redirect": "https://note2s.vip/notes/edit/YKN10X",
     "label": "Áo thun mẫu 1"
   },
   "khoahoc": {
