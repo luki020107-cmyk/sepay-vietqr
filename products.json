@@ -1,0 +1,17 @@
+{
+  "default": {
+    "amount": 15000,
+    "redirect": "https://example.com/thank-you",
+    "label": "Thanh toán mặc định"
+  },
+  "ao1": {
+    "amount": 50000,
+    "redirect": "https://example.com/link-ao1",
+    "label": "Áo thun mẫu 1"
+  },
+  "khoahoc": {
+    "amount": 299000,
+    "redirect": "https://example.com/link-khoahoc",
+    "label": "Khóa học online"
+  }
+}
