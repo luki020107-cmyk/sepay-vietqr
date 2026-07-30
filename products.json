@@ -1,45 +1,107 @@
 {
-  "link1": {
-    "amount": 20000,
-    "redirect": "https://note2s.vip/notes/edit/XJMVYQ",
+  "link409": {
+    "amount": 30000,
+    "redirect": "https://note2s.vip/notes/edit/4ZKJMJ",
     "label": "Thanh toán "
   },
-  "link2": {
-    "amount": 20000,
+  "link221": {
+    "amount": 30000,
     "redirect": "https://note2s.vip/notes/edit/YKN10X",
     "label": "Thanh toán"
   },
-  "link3": {
-    "amount": 20000,
-    "redirect": "https://note2s.vip/notes/edit/YKN1OZ",
+  "link213": {
+    "amount": 30000,
+    "redirect": "https://note2s.vip/notes/edit/2O3XKL",
     "label": "Thanh toán"
   },
-  "link4": {
-    "amount": 10000,
+  "link0701": {
+    "amount": 30000,
+    "redirect": "https://note2s.vip/notes/edit/77N97J",
+    "label": "Thanh toán "
+  },
+  "linknhuquynh": {
+    "amount": 30000,
+    "redirect": "https://note2s.vip/notes/edit/P483V4",
+    "label": "Thanh Toán"
+  },
+  "linkmaiyenchi": {
+    "amount": 30000,
+    "redirect": "https://note2s.vip/notes/edit/XJMVYQ",
+    "label": "Thanh toán"
+  },
+  "link7": {
+    "amount": 30000,
+    "redirect": "https://link-sp3.com",
+    "label": "Thanh toán"
+  },
+  "linkluuly": {
+    "amount": 30000,
+    "redirect": "https://note2s.vip/notes/YKN1OZ",
+    "label": "Thanh toán"
+  },
+  "linkvanmai": {
+    "amount": 30000,
+    "redirect": "https://note2s.vip/notes/Q483W1",
+    "label": "Thanh toán"
+  },
+{
+  "linkmaihoa": {
+    "amount": 30000,
+    "redirect": "https://note2s.vip/notes/VNK32P",
+    "label": "Thanh toán "
+  },
+  "linkgianhu": {
+    "amount": 30000,
+    "redirect": "https://note2s.vip/notes/edit/MX8Y34",
+    "label": "Thanh Toán"
+  },
+  "linkvanuyen": {
+    "amount": 30000,
+    "redirect": "https://note2s.vip/notes/edit/YKN651",
+    "label": "Thanh toán"
+  },
+  "linkbaouyen": {
+    "amount": 30000,
+    "redirect": "https://note2s.vip/notes/edit/ZJO30W",
+    "label": "Thanh toán"
+  },
+  "link419": {
+    "amount": 30000,
+    "redirect": "https://note2s.vip/notes/OZ838X",
+    "label": "Thanh toán"
+  },
+  "sp5": {
+    "amount": 30000,
+    "redirect": "https://link-sp5.com",
+    "label": "Sản phẩm 5"
+  },
+{
+  "default": {
+    "amount": 15000,
     "redirect": "https://zalo.me/tenban",
     "label": "Thanh toán mặc định"
   },
-  "link5": {
+  "sp1": {
     "amount": 50000,
     "redirect": "https://link-sp1.com",
     "label": "Sản phẩm 1"
   },
-  "link6": {
+  "sp2": {
     "amount": 80000,
     "redirect": "https://link-sp2.com",
     "label": "Sản phẩm 2"
   },
-  "link7": {
+  "sp3": {
     "amount": 120000,
     "redirect": "https://link-sp3.com",
     "label": "Sản phẩm 3"
   },
-  "link8": {
+  "sp4": {
     "amount": 200000,
     "redirect": "https://link-sp4.com",
     "label": "Sản phẩm 4"
   },
-  "link9": {
+  "sp5": {
     "amount": 350000,
     "redirect": "https://link-sp5.com",
     "label": "Sản phẩm 5"
