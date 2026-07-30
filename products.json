@@ -1,4 +1,9 @@
 {
+  "default": {
+    "amount": 15000,
+    "redirect": "https://zalo.me/tenban",
+    "label": "Thanh toán mặc định"
+  },
   "link409": {
     "amount": 30000,
     "redirect": "https://note2s.vip/notes/edit/4ZKJMJ",
@@ -44,7 +49,6 @@
     "redirect": "https://note2s.vip/notes/Q483W1",
     "label": "Thanh toán"
   },
-{
   "linkmaihoa": {
     "amount": 30000,
     "redirect": "https://note2s.vip/notes/VNK32P",
@@ -69,17 +73,6 @@
     "amount": 30000,
     "redirect": "https://note2s.vip/notes/OZ838X",
     "label": "Thanh toán"
-  },
-  "sp5": {
-    "amount": 30000,
-    "redirect": "https://link-sp5.com",
-    "label": "Sản phẩm 5"
-  },
-{
-  "default": {
-    "amount": 15000,
-    "redirect": "https://zalo.me/tenban",
-    "label": "Thanh toán mặc định"
   },
   "sp1": {
     "amount": 50000,
@@ -107,4 +100,3 @@
     "label": "Sản phẩm 5"
   }
 }
-
