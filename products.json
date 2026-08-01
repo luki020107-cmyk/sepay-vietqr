@@ -79,10 +79,10 @@
     "redirect": "https://link-sp1.com",
     "label": "Sản phẩm 1"
   },
-  "sp2": {
-    "amount": 80000,
-    "redirect": "https://link-sp2.com",
-    "label": "Sản phẩm 2"
+  "linkhocsinhcap2": {
+    "amount": 100000,
+    "redirect": "https://note2s.vip/notes/edit/NZ88WL",
+    "label": "Thanh toán"
   },
   "sp3": {
     "amount": 120000,
